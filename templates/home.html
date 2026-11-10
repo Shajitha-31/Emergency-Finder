@@ -1,0 +1,241 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Emergency Finder | Emergency Response Platform</title>
+<link rel="stylesheet" href="{{url_for('static',filename='style.css')}}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="home-page">
+
+<nav class="home-nav">
+    <a href="/" class="brand"><i class="fa-solid fa-shield-heart"></i> Emergency Finder</a>
+    <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#portals">User Portals</a>
+        <a href="#about">About</a>
+        <button class="btn btn-red" onclick="openLogin('candidate')">Login</button>
+    </div>
+</nav>
+
+<section class="hero">
+    <div class="hero-content">
+        <span class="eyebrow">SMART EMERGENCY RESPONSE PLATFORM</span>
+        <h1>Every Second Counts.<br><span>Every Life Matters.</span></h1>
+        <p>
+            Emergency Finder connects citizens, emergency administrators
+            and response teams through one intelligent platform.
+            Report incidents, locate emergencies and coordinate faster responses.
+        </p>
+        <div class="hero-actions">
+            <button class="btn btn-red" onclick="openLogin('candidate')">
+                <i class="fa-solid fa-triangle-exclamation"></i> Report Emergency
+            </button>
+            <button class="btn btn-outline" onclick="openLogin('admin')">
+                <i class="fa-solid fa-user-shield"></i> Administrator Login
+            </button>
+        </div>
+        <p class="hero-note">
+            <i class="fa-solid fa-circle-check"></i>
+            Centralized reporting · Intelligent prioritization · Location-based response
+        </p>
+    </div>
+
+    <div class="hero-visual">
+        <div class="visual-orbit">
+            <i class="fa-solid fa-truck-medical"></i>
+        </div>
+        <h3>EMERGENCY RESPONSE NETWORK</h3>
+        <p>REPORT · LOCATE · RESPOND</p>
+        <div class="visual-points">
+            <span>● Fire Rescue</span>
+            <span>● Medical Support</span>
+            <span>● Disaster Rescue</span>
+        </div>
+    </div>
+</section>
+
+<section class="home-stats">
+    <div><h2>24/7</h2><p>Emergency Reporting Access</p></div>
+    <div><h2>GPS</h2><p>Location-based Coordination</p></div>
+    <div><h2>SMART</h2><p>Incident Prioritization</p></div>
+</section>
+
+<section class="home-section" id="features">
+    <div class="section-heading">
+        <span>OUR CAPABILITIES</span>
+        <h2>One Platform. Faster Emergency Coordination.</h2>
+        <p>Technology that supports organized emergency management.</p>
+    </div>
+
+    <div class="feature-grid">
+        <article class="feature-card">
+            <i class="fa-solid fa-file-circle-plus"></i>
+            <h3>Emergency Reporting</h3>
+            <p>Submit multiple incident reports with descriptions, photographs and location details.</p>
+        </article>
+
+        <article class="feature-card">
+            <i class="fa-solid fa-brain"></i>
+            <h3>Smart Prioritization</h3>
+            <p>Rule-based severity scoring helps administrators identify critical incidents.</p>
+        </article>
+
+        <article class="feature-card">
+            <i class="fa-solid fa-location-dot"></i>
+            <h3>GPS Location Tracking</h3>
+            <p>Capture incident coordinates and locate registered emergency response teams.</p>
+        </article>
+
+        <article class="feature-card">
+            <i class="fa-solid fa-people-group"></i>
+            <h3>Response Team Management</h3>
+            <p>Register rescue teams and manage their locations and availability.</p>
+        </article>
+
+        <article class="feature-card">
+            <i class="fa-solid fa-route"></i>
+            <h3>Nearest Team Assignment</h3>
+            <p>Find the nearest available team that matches the emergency category.</p>
+        </article>
+
+        <article class="feature-card">
+            <i class="fa-solid fa-chart-line"></i>
+            <h3>Live Analytics</h3>
+            <p>Monitor reported, critical, pending and resolved incidents from one dashboard.</p>
+        </article>
+    </div>
+</section>
+
+<section class="portal-section" id="portals">
+    <div class="section-heading">
+        <span>GET STARTED</span>
+        <h2>Choose Your Portal</h2>
+        <p>Separate access for citizens and emergency administrators.</p>
+    </div>
+
+    <div class="portal-grid">
+        <article class="portal-card candidate-card">
+            <i class="fa-solid fa-user portal-icon"></i>
+            <h3>Candidate / Citizen Portal</h3>
+            <p>Create an account, report emergencies, upload photographs,
+            capture GPS coordinates and monitor your submitted reports.</p>
+            <button class="btn btn-blue" onclick="openLogin('candidate')">
+                Candidate Login
+            </button>
+            <a href="/register" class="register-link">
+                New user? Create your account →
+            </a>
+        </article>
+
+        <article class="portal-card admin-card">
+            <i class="fa-solid fa-user-shield portal-icon"></i>
+            <h3>Administrator Portal</h3>
+            <p>Manage emergency reports, prioritize incidents,
+            register response teams and coordinate emergency operations.</p>
+            <button class="btn btn-red" onclick="openLogin('admin')">
+                Administrator Login
+            </button>
+            <span class="register-link">Authorized administrators only</span>
+        </article>
+    </div>
+</section>
+
+<section class="home-section" id="about">
+    <div class="section-heading">
+        <span>ABOUT EMERGENCY FINDER</span>
+        <h2>Bringing Emergency Information Together</h2>
+        <p>
+            A centralized emergency coordination prototype designed
+            to improve incident visibility, response organization and
+            location-based team management.
+        </p>
+    </div>
+</section>
+
+<footer class="home-footer">
+    <h2><i class="fa-solid fa-shield-heart"></i> Emergency Finder</h2>
+    <p>Smart Emergency Response & Disaster Management Platform</p>
+    <p>CODE CLASH 2026 · Round 2</p>
+    <p>For real emergencies, contact the appropriate official emergency services.</p>
+</footer>
+
+<div class="modal" id="loginModal">
+    <div class="login-box">
+        <button class="modal-close" onclick="closeLogin()">&times;</button>
+
+        <div class="login-brand">
+            <i class="fa-solid fa-shield-heart"></i>
+            Emergency Finder
+        </div>
+
+        <h2>Welcome Back</h2>
+        <p>Sign in to access your emergency response portal.</p>
+
+        <div class="role-tabs">
+            <button id="candidateTab" onclick="selectRole('candidate')">Candidate</button>
+            <button id="adminTab" onclick="selectRole('admin')">Administrator</button>
+        </div>
+
+        <form method="POST" action="/login">
+            <input type="hidden" name="role" id="loginRole" value="candidate">
+
+            <label>Email address</label>
+            <input type="email" name="email" required placeholder="Enter your email">
+
+            <label>Password</label>
+            <input type="password" name="password" required placeholder="Enter password">
+
+            <button type="submit" class="btn btn-red login-submit">
+                Sign In <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </form>
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <p class="error-message">{{message}}</p>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <div class="login-register">
+            New candidate? <a href="/register">Register here</a>
+        </div>
+
+        <div class="demo-credentials">
+            <b>Hackathon demo accounts</b>
+            <hr>
+            Candidate: candidate@resqnet.in / candidate123
+            <hr>
+            Admin: admin@resqnet.in / admin123
+        </div>
+    </div>
+</div>
+
+<script>
+function openLogin(role){
+    document.getElementById("loginModal").classList.add("show");
+    selectRole(role);
+}
+
+function closeLogin(){
+    document.getElementById("loginModal").classList.remove("show");
+}
+
+function selectRole(role){
+    document.getElementById("loginRole").value=role;
+    document.getElementById("candidateTab").classList.toggle("selected",role==="candidate");
+    document.getElementById("adminTab").classList.toggle("selected",role==="admin");
+}
+
+document.getElementById("loginModal").addEventListener("click",e=>{
+    if(e.target.id==="loginModal")closeLogin();
+});
+
+selectRole("candidate");
+</script>
+</body>
+</html>

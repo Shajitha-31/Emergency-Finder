@@ -1,0 +1,265 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Emergency Finder | Command Center</title>
+<link rel="stylesheet" href="{{url_for('static',filename='style.css')}}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+</head>
+<body class="dashboard-page">
+
+<aside class="sidebar">
+    <a href="/dashboard" class="side-brand">
+        <i class="fa-solid fa-shield-heart"></i>
+        <div><strong>Emergency Finder</strong><small>COMMAND CENTER</small></div>
+    </a>
+
+    <p class="side-label">WORKSPACE</p>
+    <a class="side-link active" href="#overview"><i class="fa-solid fa-chart-pie"></i> Overview</a>
+    <a class="side-link" href="#mapSection"><i class="fa-solid fa-map-location-dot"></i> Live Map</a>
+    <a class="side-link" href="#incidents"><i class="fa-solid fa-list-check"></i> Incidents</a>
+    <a class="side-link" href="#teams"><i class="fa-solid fa-people-group"></i> Response Teams</a>
+    <a class="side-link" href="#analytics"><i class="fa-solid fa-chart-line"></i> Analytics</a>
+
+    <div class="side-bottom">
+        <span class="online-dot"></span> System operational
+        <p>Administrator access</p>
+    </div>
+</aside>
+
+<main class="admin-main">
+
+<header class="admin-header">
+    <div>
+        <span class="eyebrow">ROUND 2 · EMERGENCY OPERATIONS</span>
+        <h1>Smart Command Center</h1>
+        <p>Welcome, {{name}}. Coordinate emergency response operations.</p>
+    </div>
+    <div class="header-actions">
+        <span class="live-badge">● LIVE SYSTEM</span>
+        <a class="logout-btn" href="/logout">Logout</a>
+    </div>
+</header>
+
+<section class="admin-banner">
+    <div>
+        <h2>Emergency Intelligence & Response Coordination</h2>
+        <p>Prioritize incidents, assign nearby teams and monitor response progress.</p>
+    </div>
+    <i class="fa-solid fa-tower-broadcast"></i>
+</section>
+
+<section id="overview">
+    <div class="section-title">
+        <h2>Operational Overview</h2>
+        <span>Auto refresh every 15 seconds</span>
+    </div>
+
+    <div class="stats-grid">
+        <article class="stat-card"><div class="stat-icon blue"><i class="fa-solid fa-file-lines"></i></div><p>Total incidents</p><h2 id="total">0</h2></article>
+        <article class="stat-card"><div class="stat-icon red"><i class="fa-solid fa-triangle-exclamation"></i></div><p>Critical incidents</p><h2 id="critical">0</h2></article>
+        <article class="stat-card"><div class="stat-icon orange"><i class="fa-solid fa-clock"></i></div><p>Pending incidents</p><h2 id="pending">0</h2></article>
+        <article class="stat-card"><div class="stat-icon green"><i class="fa-solid fa-circle-check"></i></div><p>Resolved incidents</p><h2 id="resolved">0</h2></article>
+    </div>
+
+    <div class="stats-grid">
+        <article class="stat-card"><div class="stat-icon blue"><i class="fa-solid fa-people-group"></i></div><p>Total teams</p><h2 id="teamsTotal">0</h2></article>
+        <article class="stat-card"><div class="stat-icon green"><i class="fa-solid fa-user-check"></i></div><p>Available teams</p><h2 id="teamsAvailable">0</h2></article>
+        <article class="stat-card"><div class="stat-icon orange"><i class="fa-solid fa-truck-fast"></i></div><p>Busy teams</p><h2 id="teamsBusy">0</h2></article>
+        <article class="stat-card"><div class="stat-icon red"><i class="fa-solid fa-ban"></i></div><p>Unavailable teams</p><h2 id="teamsUnavailable">0</h2></article>
+    </div>
+</section>
+
+<section class="panel map-panel" id="mapSection">
+    <div class="panel-heading">
+        <div>
+            <h3><i class="fa-solid fa-map-location-dot"></i> Emergency & Response Team Map</h3>
+            <p>Incident locations, team locations and assignment connections.</p>
+        </div>
+        <span class="live-badge">LIVE MAP</span>
+    </div>
+
+    <div class="map-legend">
+        <span><i class="legend-dot critical"></i> Critical</span>
+        <span><i class="legend-dot high"></i> High</span>
+        <span><i class="legend-dot medium"></i> Medium</span>
+        <span><i class="legend-dot low"></i> Low</span>
+        <span>🔵 Response team</span>
+    </div>
+
+    <div id="incidentMap"></div>
+    <p class="map-footer">Map connections represent straight-line distances, not actual road navigation.</p>
+</section>
+
+<section class="panel incident-panel" id="incidents">
+    <div class="panel-heading">
+        <div>
+            <h3><i class="fa-solid fa-list-check"></i> Incident Management</h3>
+            <p>Review reports, assign teams and update incident status.</p>
+        </div>
+        <button class="btn btn-blue" onclick="loadAll()">Refresh</button>
+    </div>
+
+    <div class="filter-row">
+        <input id="searchInput" placeholder="Search ID, title or location">
+        <select id="severityFilter">
+            <option value="">All priorities</option>
+            <option>Critical</option><option>High</option><option>Medium</option><option>Low</option>
+        </select>
+        <select id="categoryFilter">
+            <option value="">All categories</option>
+            <option>Fire Emergency</option><option>Road Accident</option>
+            <option>Medical Emergency</option><option>Flood</option>
+            <option>Building Collapse</option><option>Other Emergencies</option>
+        </select>
+        <select id="statusFilter">
+            <option value="">All statuses</option>
+            <option>Reported</option><option>Assigned</option>
+            <option>In Progress</option><option>Resolved</option>
+        </select>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th><th>INCIDENT</th><th>CATEGORY</th><th>LOCATION</th>
+                    <th>PRIORITY</th><th>TEAM</th><th>STATUS</th><th>ACTIONS</th>
+                </tr>
+            </thead>
+            <tbody id="incidentTable">
+                <tr><td colspan="8">Loading...</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <p id="recordCount" class="record-count"></p>
+</section>
+
+<section class="panel team-panel" id="teams">
+    <div class="panel-heading">
+        <div>
+            <h3><i class="fa-solid fa-people-group"></i> Emergency Response Team Management</h3>
+            <p>Register rescue teams and manage their locations and availability.</p>
+        </div>
+    </div>
+
+    <form id="teamForm" class="team-form">
+
+        <div class="ef-two">
+
+            <div class="ef-field">
+                <label>Team name *</label>
+                <input id="teamName" required placeholder="e.g. Chennai Fire Rescue">
+            </div>
+
+            <div class="ef-field">
+                <label>Team ID *</label>
+                <input id="teamCode" required placeholder="e.g. FIRE-001">
+            </div>
+
+            <div class="ef-field">
+                <label>Response category *</label>
+                <select id="teamCategory" required>
+                    <option value="">Select category</option>
+                    <option>All</option>
+                    <option>Fire Emergency</option>
+                    <option>Road Accident</option>
+                    <option>Medical Emergency</option>
+                    <option>Flood</option>
+                    <option>Building Collapse</option>
+                    <option>Other Emergencies</option>
+                </select>
+            </div>
+
+            <div class="ef-field">
+                <label>Contact number</label>
+                <input id="teamPhone" placeholder="Optional team contact">
+            </div>
+
+            <div class="ef-field ef-full">
+                <label>Team location *</label>
+                <div class="location-input-group">
+                    <input id="teamLocation" required
+                           placeholder="Enter city, area or rescue station">
+                    <button type="button" class="btn btn-blue"
+                            id="findCoordinates" onclick="findTeamCoordinates()">
+                        <i class="fa-solid fa-location-crosshairs"></i>
+                        Find Location
+                    </button>
+                </div>
+                <small id="locationMessage" class="location-message">
+                    Enter the location and click Find Location.
+                </small>
+            </div>
+
+            <div class="ef-field">
+                <label>Latitude *</label>
+                <input id="teamLatitude" type="number" step="any"
+                       required placeholder="Automatically detected">
+            </div>
+
+            <div class="ef-field">
+                <label>Longitude *</label>
+                <input id="teamLongitude" type="number" step="any"
+                       required placeholder="Automatically detected">
+            </div>
+
+        </div>
+
+        <button class="btn btn-blue" type="submit">
+            <i class="fa-solid fa-plus"></i> Add Response Team
+        </button>
+
+        <div id="teamMessage" class="ef-message"></div>
+    </form>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>TEAM ID</th><th>TEAM</th><th>CATEGORY</th>
+                    <th>LOCATION</th><th>AVAILABILITY</th><th>ACTIONS</th>
+                </tr>
+            </thead>
+            <tbody id="teamTable">
+                <tr><td colspan="6">Loading teams...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="admin-content-grid" id="analytics">
+    <div class="panel">
+        <h3><i class="fa-solid fa-chart-column"></i> Incident Category Distribution</h3>
+        <div id="categoryList"></div>
+    </div>
+    <div class="panel">
+        <h3><i class="fa-solid fa-brain"></i> Priority Distribution</h3>
+        <div id="severityList"></div>
+    </div>
+</section>
+
+<section class="panel duplicate-panel">
+    <h3><i class="fa-solid fa-copy"></i> Potential Duplicate Reports</h3>
+    <div id="duplicateList">Loading...</div>
+</section>
+
+<footer class="admin-footer">Emergency Finder © 2026 · CODE CLASH 2026</footer>
+
+</main>
+
+<div class="modal" id="detailModal">
+    <div class="detail-box">
+        <button class="modal-close" onclick="closeDetails()">&times;</button>
+        <h2>Incident Intelligence Report</h2>
+        <div id="detailContent"></div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="{{url_for('static',filename='script.js')}}"></script>
+</body>
+</html>

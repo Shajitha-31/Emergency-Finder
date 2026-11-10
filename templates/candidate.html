@@ -1,0 +1,390 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Emergency Finder | Citizen Portal</title>
+<link rel="stylesheet" href="{{url_for('static',filename='style.css')}}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="candidate-page">
+
+<nav class="ef-nav">
+    <a class="ef-logo" href="/"><i class="fa-solid fa-shield-heart"></i> Emergency Finder</a>
+    <div class="ef-nav-right">
+        <span>Welcome, {{name}}</span>
+        <a class="ef-logout" href="/logout">Logout</a>
+    </div>
+</nav>
+
+<main class="ef-main">
+
+<section class="ef-hero">
+    <div>
+        <span class="eyebrow">CITIZEN EMERGENCY PORTAL</span>
+        <h1>Report an Emergency.<br>Help Save Lives.</h1>
+        <p>Report incidents, upload photographs and capture emergency locations.</p>
+    </div>
+    <i class="fa-solid fa-tower-broadcast ef-hero-icon"></i>
+</section>
+
+<div class="ef-warning">
+    <i class="fa-solid fa-triangle-exclamation"></i>
+    This is a hackathon prototype. For immediate danger, contact official emergency services.
+</div>
+
+<div class="ef-layout">
+
+<section class="ef-card">
+    <h2><i class="fa-solid fa-file-circle-plus accent"></i> New Emergency Report</h2>
+    <p class="ef-sub">You can submit multiple reports under the same category.</p>
+
+    <form id="reportForm" enctype="multipart/form-data">
+
+        <div class="ef-two">
+
+            <div class="ef-field">
+                <label>Incident title *</label>
+                <input name="title" required maxlength="150"
+                       placeholder="e.g. Building fire near main road">
+            </div>
+
+            <div class="ef-field">
+                <label>Emergency category *</label>
+                <select name="category" required>
+                    <option value="">Select category</option>
+                    <option>Fire Emergency</option>
+                    <option>Road Accident</option>
+                    <option>Medical Emergency</option>
+                    <option>Flood</option>
+                    <option>Building Collapse</option>
+                    <option>Other Emergencies</option>
+                </select>
+            </div>
+
+            <div class="ef-field ef-full">
+                <label>Description *</label>
+                <textarea name="description" id="description" required maxlength="2000"
+                          placeholder="Describe the emergency..."></textarea>
+
+                <div class="voice-controls">
+                    <strong>Voice reporting</strong>
+                    <button type="button" class="voice-btn" onclick="startVoice('en-IN')">Speak English</button>
+                    <button type="button" class="voice-btn tamil" onclick="startVoice('ta-IN')">தமிழில் பேசவும்</button>
+                    <button type="button" class="voice-btn stop" onclick="stopVoice()">Stop</button>
+                </div>
+                <p id="voiceMessage" class="small-note">Voice reporting requires browser microphone permission.</p>
+            </div>
+
+            <div class="ef-field">
+                <label>Incident location *</label>
+                <input name="location" id="incidentLocation" required maxlength="200"
+                       placeholder="Street, area or landmark">
+            </div>
+
+            <div class="ef-field">
+                <label>Number of people affected</label>
+                <input name="affected" type="number" min="0" max="1000000" value="0">
+            </div>
+
+            <div class="ef-field ef-full">
+                <label>Contact information</label>
+                <input name="contact" maxlength="100" placeholder="Optional contact number">
+            </div>
+        </div>
+
+        <div class="ef-field">
+            <label><i class="fa-solid fa-camera accent"></i> Incident photograph</label>
+            <label class="ef-upload" for="photo">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+                <strong>Upload incident photograph</strong>
+                <p>JPG, PNG or WEBP · Maximum 5 MB</p>
+            </label>
+            <input id="photo" name="photo" type="file"
+                   accept="image/jpeg,image/png,image/webp" hidden>
+            <div class="ef-preview" id="previewBox">
+                <img id="previewImage" alt="Incident preview">
+                <button type="button" class="remove-photo" onclick="removePhoto()">Remove</button>
+            </div>
+        </div>
+
+        <div class="ef-location">
+            <div class="ef-location-top">
+                <strong><i class="fa-solid fa-location-crosshairs accent"></i> Incident GPS coordinates</strong>
+                <button type="button" class="ef-gps" onclick="captureLocation()">
+                    <i class="fa-solid fa-location-dot"></i> Detect My Location
+                </button>
+            </div>
+            <p id="gpsMessage">Capture the current incident location using GPS.</p>
+            <div id="coordinates" class="ef-coordinates"></div>
+            <input type="hidden" name="latitude" id="latitude">
+            <input type="hidden" name="longitude" id="longitude">
+        </div>
+
+        <button class="ef-submit" id="submitBtn" type="submit">
+            <i class="fa-solid fa-paper-plane"></i> Analyze & Submit Report
+        </button>
+
+        <div id="formMessage" class="ef-message" role="status"></div>
+        <div id="analysisResult"></div>
+
+    </form>
+</section>
+
+<aside class="ef-card">
+    <div class="panel-heading">
+        <div>
+            <h2><i class="fa-solid fa-clipboard-list accent"></i> My Reports</h2>
+            <p class="ef-sub">Track your emergency submissions.</p>
+        </div>
+        <button class="refresh-btn" onclick="loadMyReports()">
+            <i class="fa-solid fa-rotate"></i>
+        </button>
+    </div>
+
+    <div class="ef-summary">
+        <div><strong id="myTotal">0</strong><span>Total</span></div>
+        <div><strong id="myActive">0</strong><span>Active</span></div>
+        <div><strong id="myResolved">0</strong><span>Resolved</span></div>
+    </div>
+
+    <div id="myReports">Loading reports...</div>
+</aside>
+
+</div>
+</main>
+
+<footer class="ef-footer">Emergency Finder © 2026 · CODE CLASH 2026</footer>
+
+<script>
+let recognition=null;
+let previewURL=null;
+
+function esc(value){
+    return String(value??"").replace(/[&<>"']/g,c=>({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    })[c]);
+}
+
+function startVoice(language){
+    const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+
+    if(!SpeechRecognition){
+        document.getElementById("voiceMessage").textContent="Voice recognition is not supported.";
+        return;
+    }
+
+    stopVoice();
+
+    recognition=new SpeechRecognition();
+    recognition.lang=language;
+    recognition.continuous=true;
+    recognition.interimResults=false;
+
+    recognition.onstart=()=>{
+        document.getElementById("voiceMessage").textContent="Listening...";
+    };
+
+    recognition.onresult=event=>{
+        let spoken="";
+
+        for(let i=event.resultIndex;i<event.results.length;i++){
+            if(event.results[i].isFinal){
+                spoken+=event.results[i][0].transcript+" ";
+            }
+        }
+
+        const field=document.getElementById("description");
+        field.value=(field.value+" "+spoken).trim().slice(0,2000);
+    };
+
+    recognition.onerror=event=>{
+        document.getElementById("voiceMessage").textContent="Voice error: "+event.error;
+    };
+
+    recognition.onend=()=>{
+        document.getElementById("voiceMessage").textContent="Voice input stopped.";
+    };
+
+    recognition.start();
+}
+
+function stopVoice(){
+    if(recognition){
+        recognition.stop();
+        recognition=null;
+    }
+}
+
+document.getElementById("photo").addEventListener("change",function(){
+    const file=this.files[0];
+
+    if(!file)return;
+
+    if(!["image/jpeg","image/png","image/webp"].includes(file.type)||file.size>5*1024*1024){
+        alert("Select a JPG, PNG or WEBP image under 5 MB.");
+        this.value="";
+        return;
+    }
+
+    if(previewURL)URL.revokeObjectURL(previewURL);
+
+    previewURL=URL.createObjectURL(file);
+    document.getElementById("previewImage").src=previewURL;
+    document.getElementById("previewBox").style.display="block";
+});
+
+function removePhoto(){
+    document.getElementById("photo").value="";
+    document.getElementById("previewBox").style.display="none";
+
+    if(previewURL)URL.revokeObjectURL(previewURL);
+
+    previewURL=null;
+}
+
+function captureLocation(){
+    const message=document.getElementById("gpsMessage");
+
+    if(!navigator.geolocation){
+        message.textContent="GPS is not supported.";
+        return;
+    }
+
+    message.textContent="Requesting GPS permission...";
+
+    navigator.geolocation.getCurrentPosition(position=>{
+        const lat=position.coords.latitude;
+        const lon=position.coords.longitude;
+
+        document.getElementById("latitude").value=lat;
+        document.getElementById("longitude").value=lon;
+
+        document.getElementById("coordinates").textContent=
+            `${lat.toFixed(6)}, ${lon.toFixed(6)}`;
+
+        message.textContent="GPS location captured successfully.";
+    },error=>{
+        message.textContent=error.code===1
+            ?"Location permission denied."
+            :"Unable to get location. Check GPS and browser permissions.";
+    },{enableHighAccuracy:true,timeout:15000});
+}
+
+function showAnalysis(result){
+
+    const duplicate=result.duplicates||[];
+
+    document.getElementById("analysisResult").innerHTML=`
+    <div class="analysis-card">
+        <h3><i class="fa-solid fa-brain"></i> Intelligent Priority Assessment</h3>
+        <div class="analysis-score">
+            <strong>${result.score}/100</strong>
+            <span class="pill sev-${esc(result.severity)}">${esc(result.severity)}</span>
+        </div>
+        <p><b>Analysis:</b> ${esc(result.reasons)}</p>
+        <p><b>Recommended action:</b> ${esc(result.action)}</p>
+        <p><b>Suggested teams:</b></p>
+        ${(result.teams||[]).map(t=>`<span class="team-tag">${esc(t)}</span>`).join("")}
+        ${result.assigned_team?`
+            <div class="assignment-success">
+                <b>Nearest team assigned</b>
+                <p>${esc(result.assigned_team.name)} · ${result.assigned_team.distance} km</p>
+            </div>`:
+            `<p>No automatic team assignment. Administrator can assign a team.</p>`}
+        ${duplicate.length?`
+            <div class="duplicate-warning">
+                Potential similar report: #${duplicate[0].id}.
+                Your new report is saved separately.
+            </div>`:""}
+    </div>`;
+}
+
+document.getElementById("reportForm").addEventListener("submit",async e=>{
+    e.preventDefault();
+    stopVoice();
+
+    const button=document.getElementById("submitBtn");
+    const message=document.getElementById("formMessage");
+
+    button.disabled=true;
+    message.textContent="Processing emergency report...";
+
+    try{
+        const response=await fetch("/api/incidents",{
+            method:"POST",
+            body:new FormData(e.target)
+        });
+
+        const result=await response.json();
+
+        if(!response.ok)throw new Error(result.error||"Submission failed.");
+
+        message.style.color="#16804a";
+        message.textContent=`Report #${result.id} submitted successfully.`;
+
+        showAnalysis(result);
+
+        e.target.reset();
+        removePhoto();
+
+        document.getElementById("coordinates").textContent="";
+        document.getElementById("gpsMessage").textContent="No GPS location captured.";
+
+        await loadMyReports();
+
+    }catch(error){
+        message.style.color="#c72f46";
+        message.textContent=error.message;
+    }finally{
+        button.disabled=false;
+    }
+});
+
+async function loadMyReports(){
+
+    const box=document.getElementById("myReports");
+
+    try{
+        const response=await fetch("/api/incidents");
+
+        if(!response.ok)throw new Error("Unable to load reports.");
+
+        const reports=await response.json();
+
+        document.getElementById("myTotal").textContent=reports.length;
+        document.getElementById("myActive").textContent=
+            reports.filter(r=>r.status!=="Resolved").length;
+        document.getElementById("myResolved").textContent=
+            reports.filter(r=>r.status==="Resolved").length;
+
+        if(!reports.length){
+            box.innerHTML="<p class='empty-message'>No reports submitted yet.</p>";
+            return;
+        }
+
+        box.innerHTML=reports.map(r=>`
+        <article class="ef-report">
+            <h4>#${r.id} · ${esc(r.title)}</h4>
+            <p>${esc(r.category)} · ${esc(r.location)}</p>
+            <p>Submitted: ${esc(r.created)}</p>
+            <span class="pill sev-${esc(r.severity)}">${esc(r.severity)}</span>
+            <span class="pill st-${String(r.status).replaceAll(" ","-")}">${esc(r.status)}</span>
+            <p><b>Assigned team:</b> ${esc(r.team)}</p>
+            ${r.duplicate_of?`<p>Similar report: #${r.duplicate_of}</p>`:""}
+            ${r.photo?`<img class="ef-photo" src="/static/uploads/${encodeURIComponent(r.photo)}" alt="Incident photo">`:""}
+            ${r.latitude!==null&&r.longitude!==null?
+                `<a class="ef-map" target="_blank" rel="noopener"
+                href="https://www.google.com/maps?q=${encodeURIComponent(r.latitude)},${encodeURIComponent(r.longitude)}">Open incident map →</a>`:""}
+        </article>`).join("");
+
+    }catch(error){
+        box.textContent=error.message;
+    }
+}
+
+loadMyReports();
+</script>
+</body>
+</html>

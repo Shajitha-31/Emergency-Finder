@@ -1,0 +1,324 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RESQNET | Emergency Management</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:Inter,Arial;background:#f6f8fc;color:#17243b}
+nav{height:76px;background:#101e35;color:white;display:flex;align-items:center;justify-content:space-between;padding:0 8%;position:sticky;top:0;z-index:10}
+.logo{display:flex;align-items:center;gap:12px;font-size:23px;font-weight:800;letter-spacing:1px}
+.logo i{background:#e83d54;padding:12px;border-radius:10px}
+nav a{color:#d5deea;text-decoration:none;font-size:13px;margin-left:25px}
+nav .nav-login{background:#e83d54;padding:12px 20px;border-radius:7px;color:white}
+.hero{background:linear-gradient(110deg,#101e35 20%,#233e65 100%);color:white;padding:95px 8% 100px;display:grid;grid-template-columns:1.2fr .8fr;align-items:center;gap:40px}
+.tag{color:#ff8290;font-size:12px;letter-spacing:2px;font-weight:800}
+.hero h1{font-size:clamp(36px,5vw,57px);line-height:1.13;margin:22px 0}
+.hero h1 span{color:#ff6678}
+.hero p{color:#c3d0e2;font-size:14px;line-height:1.9;max-width:590px}
+.hero-actions{display:flex;gap:13px;margin-top:30px;flex-wrap:wrap}
+.btn{border:0;padding:15px 22px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;text-decoration:none;display:inline-block}
+.btn-red{background:#e83d54;color:white}
+.btn-outline{border:1px solid #8193ad;color:white;background:transparent}
+.hero-art{height:300px;border:1px solid #48617f;border-radius:25px;background:linear-gradient(145deg,#263e5e,#14233d);display:grid;place-items:center;position:relative;overflow:hidden}
+.hero-art i{font-size:125px;color:#ff6879;filter:drop-shadow(0 0 30px #e83d5466)}
+.hero-art small{position:absolute;bottom:25px;color:#d4dfed;letter-spacing:2px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);padding:35px 8%;gap:20px;background:white}
+.stat{text-align:center;border-right:1px solid #e7eaf0}
+.stat:last-child{border:0}
+.stat h2{font-size:27px;color:#e83d54}
+.stat p{font-size:12px;color:#77849a;margin-top:7px}
+.section{padding:75px 8%}
+.heading{text-align:center;margin-bottom:40px}
+.heading small{color:#e83d54;font-weight:800;letter-spacing:2px}
+.heading h2{font-size:30px;margin-top:12px}
+.heading p{color:#8290a2;font-size:13px;margin-top:12px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.card{background:white;padding:27px;border-radius:14px;border:1px solid #e8edf3;box-shadow:0 8px 25px #152b4810}
+.card-icon{width:50px;height:50px;border-radius:12px;background:#fff0f2;color:#e83d54;display:grid;place-items:center;font-size:21px;margin-bottom:20px}
+.card h3{font-size:16px;margin-bottom:10px}
+.card p{font-size:12px;color:#7b899c;line-height:1.8}
+.roles{background:#edf2f9}
+.role-grid{display:grid;grid-template-columns:1fr 1fr;gap:25px;max-width:900px;margin:auto}
+.role-card{background:white;padding:32px;border-radius:15px;border:1px solid #e2e8f1}
+.role-card.admin{border-top:4px solid #e83d54}
+.role-card.candidate{border-top:4px solid #347bd1}
+.role-card i{font-size:28px;color:#e83d54;margin-bottom:17px}
+.role-card.candidate i{color:#347bd1}
+.role-card h3{font-size:20px;margin-bottom:12px}
+.role-card p{font-size:12px;color:#77849a;line-height:1.8;margin-bottom:20px}
+.role-card button{width:100%}
+footer{background:#101e35;color:#c3d0e2;text-align:center;padding:35px;font-size:12px}
+footer strong{color:white;font-size:18px}
+.modal{position:fixed;inset:0;background:#071326bb;display:none;align-items:center;justify-content:center;padding:20px;z-index:100}
+.modal.show{display:flex}
+.login-box{background:white;width:100%;max-width:430px;padding:32px;border-radius:17px;position:relative;box-shadow:0 20px 70px #0004}
+.close{position:absolute;right:20px;top:18px;border:0;background:#f0f2f6;width:32px;height:32px;border-radius:50%;cursor:pointer}
+.login-box h2{font-size:23px;margin:18px 0 8px}
+.login-box>p{font-size:12px;color:#8490a0;margin-bottom:23px}
+.role-tabs{display:grid;grid-template-columns:1fr 1fr;background:#f0f3f8;padding:5px;border-radius:9px;margin-bottom:20px;gap:5px}
+.role-tabs button{border:0;padding:11px;border-radius:7px;background:transparent;font-size:11px;font-weight:700;cursor:pointer}
+.role-tabs button.selected{background:white;color:#e83d54;box-shadow:0 2px 8px #0001}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:11px;font-weight:700;margin-bottom:8px}
+.field input{width:100%;padding:13px;border:1px solid #dce3ec;border-radius:8px;outline:none}
+.field input:focus{border-color:#e83d54}
+.login-submit{width:100%;background:#e83d54;color:white;border:0;padding:14px;border-radius:8px;font-weight:700;cursor:pointer}
+.error{font-size:12px;color:#d32e43;margin-top:13px}
+.demo{margin-top:17px;padding:12px;background:#f2f5fa;border-radius:8px;font-size:10px;color:#6d7b8f;line-height:1.8}
+@media(max-width:800px){.hero{grid-template-columns:1fr;padding:65px 7%}.hero-art{height:210px}.cards{grid-template-columns:1fr}.role-grid{grid-template-columns:1fr}.stats{padding:25px 5%}.stats h2{font-size:22px}nav{padding:0 5%}nav a{margin-left:10px;font-size:11px}.section{padding:55px 6%}}
+@media(max-width:480px){nav a:not(.nav-login){display:none}.hero h1{font-size:37px}.stats{gap:7px}.stats p{font-size:10px}}
+</style>
+</head>
+<body>
+
+<nav>
+    <div class="logo"><i class="fa-solid fa-shield-heart"></i> RESQNET</div>
+    <div>
+        <a href="#home">Home</a>
+        <a href="#features">Features</a>
+        <a href="#about">About</a>
+        <a href="#login" class="nav-login" onclick="openLogin('candidate');return false">Login <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+</nav>
+
+<section class="hero" id="home">
+    <div>
+        <div class="tag">EMERGENCY RESPONSE & DISASTER MANAGEMENT</div>
+        <h1>When Every Second Matters, <span>Every Response Counts.</span></h1>
+        <p>
+            A centralized emergency management platform designed to
+            report, monitor and manage critical incidents. Connect
+            emergency information with organized response coordination.
+        </p>
+        <div class="hero-actions">
+            <button class="btn btn-red" onclick="openLogin('candidate')">
+                <i class="fa-solid fa-bell"></i> Report an Emergency
+            </button>
+            <a href="#features" class="btn btn-outline">Explore Platform</a>
+        </div>
+    </div>
+
+    <div class="hero-art">
+        <i class="fa-solid fa-tower-broadcast"></i>
+        <small>CONNECTED • INFORMED • RESPONSIVE</small>
+    </div>
+</section>
+
+<section class="stats">
+    <div class="stat">
+        <h2>24/7</h2>
+        <p>Platform Access</p>
+    </div>
+    <div class="stat">
+        <h2>06</h2>
+        <p>Emergency Categories</p>
+    </div>
+    <div class="stat">
+        <h2>04</h2>
+        <p>Severity Levels</p>
+    </div>
+</section>
+
+<section class="section" id="features">
+    <div class="heading">
+        <small>OUR CAPABILITIES</small>
+        <h2>One Platform. Smarter Emergency Management.</h2>
+        <p>Essential tools for organizing emergency information and incident response.</p>
+    </div>
+
+    <div class="cards">
+        <div class="card">
+            <div class="card-icon"><i class="fa-solid fa-file-circle-plus"></i></div>
+            <h3>Emergency Reporting</h3>
+            <p>Submit incident information with descriptions, locations, categories and affected people details.</p>
+        </div>
+
+        <div class="card">
+            <div class="card-icon"><i class="fa-solid fa-gauge-high"></i></div>
+            <h3>Smart Severity Classification</h3>
+            <p>Calculate a prototype priority score and recommend Low, Medium, High or Critical severity.</p>
+        </div>
+
+        <div class="card">
+            <div class="card-icon"><i class="fa-solid fa-users-gear"></i></div>
+            <h3>Response Team Recommendation</h3>
+            <p>Suggest an appropriate response team based on the emergency category.</p>
+        </div>
+
+        <div class="card">
+            <div class="card-icon"><i class="fa-solid fa-chart-line"></i></div>
+            <h3>Centralized Dashboard</h3>
+            <p>Monitor reported, critical, pending and resolved incidents in one place.</p>
+        </div>
+
+        <div class="card">
+            <div class="card-icon"><i class="fa-solid fa-list-check"></i></div>
+            <h3>Incident Management</h3>
+            <p>Review incident details, update progress and manage duplicate or test reports.</p>
+        </div>
+
+        <div class="card">
+            <div class="card-icon"><i class="fa-solid fa-map-location-dot"></i></div>
+            <h3>Location Awareness</h3>
+            <p>Organize incident location information for easier monitoring and coordination.</p>
+        </div>
+    </div>
+</section>
+
+<section class="section roles" id="about">
+    <div class="heading">
+        <small>ACCESS PORTALS</small>
+        <h2>Choose Your Portal</h2>
+        <p>RESQNET provides separate access for emergency reporters and administrators.</p>
+    </div>
+
+    <div class="role-grid">
+        <div class="role-card candidate">
+            <i class="fa-solid fa-user"></i>
+            <h3>Candidate / Public User</h3>
+            <p>
+                Report emergencies, submit incident details and
+                view the status of reports submitted through your account.
+            </p>
+            <button class="btn btn-red" onclick="openLogin('candidate')">
+                Candidate Login <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </div>
+
+        <div class="role-card admin">
+            <i class="fa-solid fa-user-shield"></i>
+            <h3>Administrator</h3>
+            <p>
+                Access the command dashboard, monitor all incidents,
+                review severity classifications and manage incident statuses.
+            </p>
+            <button class="btn btn-red" onclick="openLogin('admin')">
+                Administrator Login <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <strong>RESQNET</strong>
+    <p style="margin-top:10px">Emergency Response & Disaster Management Platform</p>
+    <p style="margin-top:8px">CODE CLASH 2026 | Hackathon Prototype</p>
+    <p style="margin-top:15px;color:#8293aa">This prototype supports emergency information management and is not a substitute for official emergency services.</p>
+</footer>
+
+<!-- LOGIN MODAL -->
+<div class="modal" id="loginModal">
+    <div class="login-box">
+        <button class="close" onclick="closeLogin()">&times;</button>
+
+        <div class="logo" style="color:#17243b;font-size:20px">
+            <i class="fa-solid fa-shield-heart"></i> RESQNET
+        </div>
+
+        <h2>Welcome Back</h2>
+        <p>Sign in to access your RESQNET portal.</p>
+
+        <div class="role-tabs">
+            <button id="candidateTab" onclick="setRole('candidate')">Candidate</button>
+            <button id="adminTab" onclick="setRole('admin')">Administrator</button>
+        </div>
+
+        <form id="loginForm">
+            <div class="field">
+                <label>Email Address</label>
+                <input id="email" type="email" required placeholder="Enter your email">
+            </div>
+
+            <div class="field">
+                <label>Password</label>
+                <input id="password" type="password" required placeholder="Enter password">
+            </div>
+
+            <button class="login-submit" id="loginButton" type="submit">
+                Sign In <i class="fa-solid fa-arrow-right"></i>
+            </button>
+
+            <div class="error" id="loginError"></div>
+        </form>
+
+        <div class="demo">
+            <strong>Hackathon demo credentials</strong><br>
+            Candidate: candidate@resqnet.in / candidate123<br>
+            Admin: admin@resqnet.in / admin123
+        </div>
+    </div>
+</div>
+
+<script>
+let selectedRole = "candidate";
+
+function openLogin(role) {
+    document.getElementById("loginModal").classList.add("show");
+    setRole(role);
+}
+
+function closeLogin() {
+    document.getElementById("loginModal").classList.remove("show");
+}
+
+function setRole(role) {
+    selectedRole = role;
+
+    document.getElementById("candidateTab").classList.toggle("selected", role === "candidate");
+    document.getElementById("adminTab").classList.toggle("selected", role === "admin");
+
+    document.getElementById("loginError").textContent = "";
+    document.getElementById("loginButton").innerHTML =
+        role === "admin" ? "Admin Sign In →" : "Candidate Sign In →";
+}
+
+document.getElementById("loginForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const error = document.getElementById("loginError");
+    const button = document.getElementById("loginButton");
+
+    button.disabled = true;
+    error.textContent = "Verifying login...";
+
+    try {
+        const response = await fetch("/login", {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({
+                email: document.getElementById("email").value,
+                password: document.getElementById("password").value,
+                role: selectedRole
+            })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) throw new Error(result.message || "Login failed");
+
+        window.location.href =
+            result.role === "admin" ? "/dashboard" : "/candidate";
+
+    } catch(err) {
+        error.textContent = err.message;
+    } finally {
+        button.disabled = false;
+    }
+});
+
+document.getElementById("loginModal").addEventListener("click", function(e) {
+    if (e.target === this) closeLogin();
+});
+
+setRole("candidate");
+</script>
+
+</body>
+</html>

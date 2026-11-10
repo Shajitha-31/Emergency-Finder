@@ -1,0 +1,77 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Register | Emergency Finder</title>
+<link rel="stylesheet" href="{{url_for('static',filename='style.css')}}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="registration-page">
+
+<div class="registration-wrapper">
+    <div class="registration-card">
+
+        <a href="/" class="back-link">
+            <i class="fa-solid fa-arrow-left"></i> Back to home
+        </a>
+
+        <div class="registration-icon">
+            <i class="fa-solid fa-user-plus"></i>
+        </div>
+
+        <span class="eyebrow">CANDIDATE REGISTRATION</span>
+        <h1>Create Your Account</h1>
+        <p class="registration-description">
+            Register to report emergencies and track your submissions.
+        </p>
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <p class="error-message">{{message}}</p>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="/register">
+
+            <label>Full name *</label>
+            <input type="text" name="name" required maxlength="100"
+                   placeholder="Enter your full name">
+
+            <label>Email address *</label>
+            <input type="email" name="email" required maxlength="150"
+                   placeholder="Enter your email">
+
+            <label>Password *</label>
+            <input type="password" name="password" required minlength="6"
+                   placeholder="Create a password">
+
+            <label>Confirm password *</label>
+            <input type="password" name="confirm_password" required minlength="6"
+                   placeholder="Re-enter your password">
+
+            <span class="registration-hint">
+                Password must contain at least 6 characters.
+            </span>
+
+            <button type="submit" class="btn btn-red registration-submit">
+                Create Account <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </form>
+
+        <p class="login-register">
+            Already registered? <a href="/">Login here</a>
+        </p>
+
+        <p class="registration-hint">
+            Administrator accounts are created separately and cannot be
+            created through public registration.
+        </p>
+    </div>
+</div>
+
+</body>
+</html>
